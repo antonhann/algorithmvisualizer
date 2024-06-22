@@ -1,11 +1,30 @@
-import { NavBar, Sections } from "../../Navbar/Navbar"
+// App.js or Layout Component
+import { NavBar, Sections } from "../../Navbar/Navbar";
+
 
 export const Home = () => {
-    return(
-        <>
-            <NavBar active = {Sections.Home}/>
-            <div>
-                <h1>This is a test</h1>
-            </div>
-        </>
-)}
+  return (
+    <div className="app-container">
+      <NavBar active={Sections.Home} />
+      <main className="main-container">
+        <section className="bg-primary text-white text-center py-5">
+          <div className="container">
+            <h1 className="display-4">Section 1</h1>
+            <p className="lead">Content of Section 1</p>
+          </div>
+        </section>
+        <section className="bg-primary-subtle text-gray text-center py-5 flex-grow-1">
+          <div className="container">
+            <h1 className="display-4">Algorithms</h1>
+            <p className="lead">Content of Section 2</p>
+          </div>
+        </section>
+      </main>
+      <footer className="footer">
+        <p>&copy; 2024 AlgVis. All Rights Reserved.</p>
+      </footer>
+    </div>
+  );
+}
+
+export default Home;

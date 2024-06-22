@@ -1,0 +1,18 @@
+/* styles.css */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Minimum height to ensure the entire viewport is covered */
+}
+
+.main-container {
+  flex-grow: 1; /* Allow main container to grow to fill available space */
+  display: flex;
+  flex-direction: column;
+}
+
+.footer {
+  background-color: #f8f9fa;
+  padding: 20px;
+  text-align: center;
+}
