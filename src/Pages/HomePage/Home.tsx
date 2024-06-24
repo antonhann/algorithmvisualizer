@@ -16,7 +16,14 @@ export const Home = () => {
         <section className="bg-primary-subtle text-gray text-center py-5 flex-grow-1">
           <div className="container">
             <h1 className="display-4">Algorithms</h1>
-            <p className="lead">Content of Section 2</p>
+            <p className="lead">Various Algorithms of Visualization</p>
+            <div className="d-flex justify-content-around pt-5">
+              <a href = "/sorting">Sorting</a>
+              <a href="/tree">Tree</a>
+              <a>Matrix</a>
+              <a>Linked List</a>
+              <a>Array</a>
+            </div>
           </div>
         </section>
       </main>
