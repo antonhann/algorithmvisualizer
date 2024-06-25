@@ -16,7 +16,8 @@
   width: 20px;
 }
 .rotate-180 {
-  transform: rotate(180deg) translateY(30%);
+  transform: rotate(180deg) scaleX(-1);
+  margin-bottom: 150px;
 }
 .footer {
   background-color: #f8f9fa;
