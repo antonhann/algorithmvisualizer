@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
-import { NavBar, Sections } from "../../Navbar/Navbar"
+import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
 
 const DEFAULT_SIZE : number = 50;
 
 enum Color{
-    defaultColor,
-    highlightColor,
-    swapColor
+    defaultColor = "black",
+    highlightColor = "blue",
+    swapColor = "red",
 }
 
 class Block{
@@ -15,7 +15,7 @@ class Block{
     color: Color;
     constructor(value : number){
         this.value = value;
-        this.height = calculateHeight(value);
+        this.height = value * 6;
         this.color = Color.defaultColor;
     }
 };
@@ -45,22 +45,27 @@ export const Sort = () => {
         fillArray(DEFAULT_SIZE);
     },[]);
     return(
-        <>
-        <NavBar active={Sections.Sorting}/>
-        <section>
-            <div className="d-flex justify-content-center gap-1">
-                {array.map(block => (
-                    <div key = {block.value}>{block.value}</div>
-                ))}
-            </div>
-        </section>
-        </>
+        <div className="app-container">
+            <NavBar active={Sections.Sorting}/>
+            <section className="main-container">
+                <div className="d-flex justify-content-center rotate-180 flex-grow-1">
+                    {array.map(block => (
+                        <div 
+                        key = {block.value} 
+                        className= "block"
+                        style= {{
+                            height: `${block.height}px`,
+                            backgroundColor: `${block.color}`
+                        }}
+                        />
+                    ))}
+                </div>
+            </section>
+            <Footer/>
+        </div>
     )
 }
-
-function calculateHeight (value : number) : number{
-    return value;
-}   
+ 
 function getRandomArbitrary(min : number, max : number) : number{
     return Math.floor(Math.random() * (max - min) + min);
 }

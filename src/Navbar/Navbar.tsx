@@ -40,3 +40,13 @@ export const NavBar = (props: NavProps) => {
         </>
     )
 }
+
+export const Footer = () => {
+    return(
+        <>
+            <footer className="footer">
+                <p>&copy; 2024 AlgVis. All Rights Reserved.</p>
+            </footer>
+        </>
+    )
+}

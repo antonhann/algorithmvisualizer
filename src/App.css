@@ -11,8 +11,13 @@
   flex-direction: column;
 }
 
-
-
+.block{
+  border: 1px solid #ccc;
+  width: 20px;
+}
+.rotate-180 {
+  transform: rotate(180deg) translateY(30%);
+}
 .footer {
   background-color: #f8f9fa;
   padding: 20px;
