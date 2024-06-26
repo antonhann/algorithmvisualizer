@@ -23,7 +23,7 @@ class Block{
 };
 
 export const Sort = () => {
-    const [array, setArray] = useState<Block[]>([]);
+    const [array, setArray] = useState<Block[]>([]); //current array
     const [sorted, setSorted] = useState<boolean>(false); // To flag if the array is sorted
     const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
     const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
@@ -113,7 +113,7 @@ export const Sort = () => {
                 break;
             }
         }
-        setAnimationOnGoingState(false);
+        //animation done
         await finishAnimation(localArray,slept);
     }
     
@@ -127,33 +127,38 @@ export const Sort = () => {
         setAnimationOnGoingState(true);
 
         for(let i : number = 0; i < localArray.length; i++){
-            let maxIndex : number = 0;
+            let maxIndex : number = 0; //max index of the current iteration
             for(let j : number = 0; j < localArray.length - i; j++){
                 if (!animationOnGoingRef.current) {
                     // if the animation is stopped, break the animation
                     break;
                 }
+                //highlight the current block
                 await colorBlock(localArray, j, slept, Color.highlightColor);
+
+                //check if the current block is greater than the max block
                 if(localArray[j].value > localArray[maxIndex].value){
                     await colorBlock(localArray, maxIndex, slept, Color.defaultColor);
                     maxIndex = j;
                     await colorBlock(localArray, maxIndex, slept, Color.swapColor);
                 }else{
-                    //reset the color of the current block
+                    //reset the color of the current block that isnt that max block
                     await colorBlock(localArray, j, slept, Color.defaultColor);
                 }
             }
+            //swap the max block with the last unsorted block
             let temp : Block = localArray[maxIndex];
             localArray[maxIndex] = localArray[localArray.length - i - 1];
             localArray[localArray.length - i - 1] = temp;
             await updateArray(localArray, slept);
             await colorBlock(localArray, localArray.length - i - 1, slept, Color.sortedColor);
         }
-        setAnimationOnGoingState(false);
+        //animation done
         await finishAnimation(localArray,slept);
     }
 
     const finishAnimation = async (arr : Block[], slept : number) : Promise<void> => {
+        //cool ending animation
         setAnimationOnGoing(false);
         let copyArray : Block[] = [...arr];
         for(let i : number = 0; i < copyArray.length; i++){
@@ -162,6 +167,7 @@ export const Sort = () => {
     }
 
     useEffect(()=>{
+        //on load fill the array
         fillArray(DEFAULT_SIZE);
     },[]);
 
