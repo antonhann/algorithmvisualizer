@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
 
 const DEFAULT_SIZE : number = 20;
@@ -24,12 +24,18 @@ class Block{
 
 export const Sort = () => {
     const [array, setArray] = useState<Block[]>([]);
-    const [sorted, setSorted] = useState<boolean>(false);
+    const [sorted, setSorted] = useState<boolean>(false); // To flag if the array is sorted
+    const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
+    const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
+
     const fillArray = (size : number) : void => {
+        //reset the animation state
+        setAnimationOnGoingState(false);
         let newArray : Block[] = [];
         let inside : Set<number> = new Set<number>();
         setSorted(false);
-
+        
+        //fill in the array with random values within [0,size)
         for(let i : number = 0; i < size; i++){
 
             let newValue: number = getRandomArbitrary(0, size);
@@ -43,61 +49,93 @@ export const Sort = () => {
         setArray(newArray);
     }
 
+    // delay function
     const sleep = (ms : number) => new Promise(resolve => setTimeout(resolve, ms));
-    const updateArray = async (newArray : Block[], time : number) => {
-        setArray([...newArray]);
-        await sleep(time);
-    }
-    const bubbleSort = async () : Promise<void> => {
-        let copyArray : Block[] = [...array];
-        let slept : number = 10;
 
-        for(let i : number = 0; i < copyArray.length; i++){
+    // update the array
+    const updateArray = async (newArray : Block[], time : number) => {
+        //only update if there is an ongoing animation
+        if(animationOnGoingRef.current){
+            setArray([...newArray]);
+            await sleep(time);
+        }
+    }
+
+    // color block of the array[index]
+    const colorBlock = async (arr : Block[], index : number, time : number, color : Color) => {
+        let copyArray : Block[] = [...arr];
+        copyArray[index].color = color;
+        await updateArray(copyArray, time);
+    }
+
+    // set the animationOnGoing state and update the ref
+    const setAnimationOnGoingState = (state : boolean) => {
+        setAnimationOnGoing(state);
+        animationOnGoingRef.current = state;
+    };
+
+    const bubbleSort = async () : Promise<void> => {
+        // avoid overlapping animations
+        if(animationOnGoing){
+            return;
+        }
+        let localArray : Block[] = [...array]; // copy the array
+        let slept : number = 10; // sleep time
+        setAnimationOnGoingState(true);
+
+        for(let i : number = 0; i < localArray.length; i++){
             setSorted(true);
-            for(let j : number = 0; j < copyArray.length - i - 1; j++){
-                copyArray[j].color = Color.highlightColor;
-                copyArray[j+1].color = Color.highlightColor;
-                await updateArray(copyArray, slept);
-                if(copyArray[j].value > copyArray[j+1].value){
-                    setSorted(false);
-                    copyArray[j].color = Color.swapColor;
-                    copyArray[j+1].color = Color.swapColor;
-                    await updateArray(copyArray, slept);
-                    let temp : Block = copyArray[j];
-                    copyArray[j] = copyArray[j+1];
-                    copyArray[j+1] = temp;
-                    await updateArray(copyArray, slept);
+            for(let j : number = 0; j < localArray.length - i - 1; j++){
+                if (!animationOnGoingRef.current) {
+                    // if the animation is stopped, break the animation
+                    break;
                 }
-                copyArray[j].color = Color.defaultColor;
-                copyArray[j+1].color = Color.defaultColor;
+                await colorBlock(localArray, j, slept, Color.highlightColor); //highlight the current block
+                if(localArray[j].value > localArray[j+1].value){
+                    setSorted(false); //if swap is made, the array is not sorted
+
+                    //color the swap blocks
+                    await colorBlock(localArray, j, slept, Color.swapColor);
+                    await colorBlock(localArray, j+1, slept, Color.swapColor);
+
+                    //perform the swap
+                    let temp : Block = localArray[j];
+                    localArray[j] = localArray[j+1];
+                    localArray[j+1] = temp;
+                    await updateArray(localArray, slept);
+                }
+                //reset the color of the current block
+                await colorBlock(localArray, j, slept, Color.defaultColor);
             }
-            copyArray[copyArray.length - i - 1].color = Color.sortedColor;
+            //color the sorted block
+            localArray[localArray.length - i - 1].color = Color.sortedColor;
             if(sorted){
                 break;
             }
         }
-        finishAnimation(copyArray,slept);
+        setAnimationOnGoingState(false);
+
+        await finishAnimation(localArray,slept);
     }
 
     const finishAnimation = async (arr : Block[], slept : number) : Promise<void> => {
-        
-        console.log("Animation Done");
+        setAnimationOnGoing(false);
         let copyArray : Block[] = [...arr];
         for(let i : number = 0; i < copyArray.length; i++){
-            copyArray[i].color = Color.doneColor;
-            await updateArray(copyArray, slept);
+            await colorBlock(copyArray, i, slept, Color.doneColor);
         }
     }
 
     useEffect(()=>{
         fillArray(DEFAULT_SIZE);
     },[]);
+
     return(
         <div className="app-container">
             <NavBar active={Sections.Sorting}/>
             <section className="main-container">
                 <div className="d-flex justify-content-around">
-                    <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array</button>
+                    <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array {`${animationOnGoing}`}</button>
                     <div className="d-flex gap-2">
                         <button onClick={()=>bubbleSort()}>Bubble Sort</button>
                         <button onClick={()=>bubbleSort()}>Selection Sort</button>
