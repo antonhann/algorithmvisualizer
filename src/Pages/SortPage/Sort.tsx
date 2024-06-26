@@ -114,7 +114,42 @@ export const Sort = () => {
             }
         }
         setAnimationOnGoingState(false);
+        await finishAnimation(localArray,slept);
+    }
+    
+    const selectionSort = async () : Promise<void> => {
+        // avoid overlapping animations
+        if(animationOnGoing){
+            return;
+        }
+        let localArray : Block[] = [...array]; // copy the array
+        let slept : number = 10; // sleep time
+        setAnimationOnGoingState(true);
 
+        for(let i : number = 0; i < localArray.length; i++){
+            let maxIndex : number = 0;
+            for(let j : number = 0; j < localArray.length - i; j++){
+                if (!animationOnGoingRef.current) {
+                    // if the animation is stopped, break the animation
+                    break;
+                }
+                await colorBlock(localArray, j, slept, Color.highlightColor);
+                if(localArray[j].value > localArray[maxIndex].value){
+                    await colorBlock(localArray, maxIndex, slept, Color.defaultColor);
+                    maxIndex = j;
+                    await colorBlock(localArray, maxIndex, slept, Color.swapColor);
+                }else{
+                    //reset the color of the current block
+                    await colorBlock(localArray, j, slept, Color.defaultColor);
+                }
+            }
+            let temp : Block = localArray[maxIndex];
+            localArray[maxIndex] = localArray[localArray.length - i - 1];
+            localArray[localArray.length - i - 1] = temp;
+            await updateArray(localArray, slept);
+            await colorBlock(localArray, localArray.length - i - 1, slept, Color.sortedColor);
+        }
+        setAnimationOnGoingState(false);
         await finishAnimation(localArray,slept);
     }
 
@@ -138,7 +173,7 @@ export const Sort = () => {
                     <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array {`${animationOnGoing}`}</button>
                     <div className="d-flex gap-2">
                         <button onClick={()=>bubbleSort()}>Bubble Sort</button>
-                        <button onClick={()=>bubbleSort()}>Selection Sort</button>
+                        <button onClick={()=>selectionSort()}>Selection Sort</button>
                         <button onClick={()=>bubbleSort()}>Merge Sort</button>
                         <button onClick={()=>bubbleSort()}>Heap Sort</button>
                     </div>
