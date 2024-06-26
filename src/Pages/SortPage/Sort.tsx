@@ -76,7 +76,7 @@ export const Sort = () => {
 
     const bubbleSort = async () : Promise<void> => {
         // avoid overlapping animations
-        if(animationOnGoing){
+        if(animationOnGoing || sorted){
             return;
         }
         let localArray : Block[] = [...array]; // copy the array
@@ -119,7 +119,7 @@ export const Sort = () => {
     
     const selectionSort = async () : Promise<void> => {
         // avoid overlapping animations
-        if(animationOnGoing){
+        if(animationOnGoing || sorted){
             return;
         }
         let localArray : Block[] = [...array]; // copy the array
