@@ -3,7 +3,7 @@ import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
 
 const DEFAULT_SIZE : number = 50;
 
-enum Color{
+export enum Color{
     defaultColor = "black",
     highlightColor = "blue",
     sortedColor = "purple",
