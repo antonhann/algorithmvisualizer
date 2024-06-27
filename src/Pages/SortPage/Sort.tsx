@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react"
 import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
 
-const DEFAULT_SIZE : number = 20;
+const DEFAULT_SIZE : number = 50;
 
 enum Color{
     defaultColor = "black",
@@ -21,13 +21,21 @@ class Block{
         this.color = Color.defaultColor;
     }
 };
-
+class Animation{
+    type: Color;
+    indexes: number[];
+    length: number | undefined;
+    constructor(type: Color, indexes: number[], length?: number){
+        this.type = type;
+        this.indexes = indexes;
+        this.length = length;
+    }
+}
 export const Sort = () => {
     const [array, setArray] = useState<Block[]>([]); //current array
     const [sorted, setSorted] = useState<boolean>(false); // To flag if the array is sorted
     const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
     const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
-
     const fillArray = (size : number) : void => {
         //reset the animation state
         setAnimationOnGoingState(false);
@@ -156,6 +164,85 @@ export const Sort = () => {
         //animation done
         await finishAnimation(localArray,slept);
     }
+    const heapAnimations = async () : Promise<void> =>{
+        if(animationOnGoing || sorted){
+            return;
+        }
+        let animations : Animation[] = [];
+        heapSort(animations);
+        console.log(animations);
+        let localArray : Block[] = [...array];
+        let slept : number = 10;
+        for(let animation of animations){
+            console.log(animation)
+            if(!animationOnGoingRef.current){
+                break;
+            }
+            if(animation.type === Color.highlightColor || animation.type === Color.defaultColor){
+                for(let index of animation.indexes){
+                    if (animation.length && index > 0 && index < animation.length) {
+                        await colorBlock(localArray, index, slept, animation.type);
+                    }
+                }
+            }
+            else if(animation.type === Color.swapColor || animation.type === Color.sortedColor){
+                let firstIndex : number = animation.indexes[0];
+                let secondIndex : number = animation.indexes[1];
+                await colorBlock(localArray, firstIndex, slept, Color.swapColor);
+                await colorBlock(localArray, secondIndex, slept, Color.swapColor);
+                let temp : Block = localArray[firstIndex];
+                localArray[firstIndex] = localArray[secondIndex];
+                localArray[secondIndex] = temp;
+                await updateArray(localArray, slept);
+                let color = animation.type === Color.swapColor ? Color.defaultColor : Color.sortedColor;
+                await colorBlock(localArray, firstIndex, slept, color);
+                await colorBlock(localArray, secondIndex, slept, color);
+            }
+        }
+        await finishAnimation(localArray, slept);
+    }
+    const heapSort = (animations : Animation[]) : void => {
+        // avoid overlapping animations
+        let localArray : Block[] = [...array]; // copy the array
+        let slept : number = 100; // sleep time
+        setAnimationOnGoingState(true);
+
+        let parent : number = Math.floor(localArray.length / 2 - 1);
+        while(parent >= 0){
+            heapify(localArray, animations, localArray.length, parent, slept);
+            parent--;
+        }   
+        let end : number = localArray.length - 1;
+        while(end >= 0){
+            let temp : Block = localArray[0];
+            localArray[0] = localArray[end];
+            localArray[end] = temp;
+            animations.push(new Animation(Color.sortedColor, [0, end]));
+            heapify(localArray, animations, end, 0, slept);
+            end--;
+        }
+    }
+
+    const heapify = (arr : Block[], animations: Animation[], length : number, parentIndex: number, slept : number) : void =>{
+        let leftIndex : number = 2 * parentIndex + 1;
+        let rightIndex : number = 2 * parentIndex + 2;
+        let largestIndex : number = parentIndex;
+        animations.push(new Animation(Color.highlightColor, [parentIndex, leftIndex, rightIndex], length));
+        if(leftIndex < length && arr[leftIndex].value > arr[largestIndex].value){
+            largestIndex = leftIndex;
+        }
+        if(rightIndex < length && arr[rightIndex].value > arr[largestIndex].value){
+            largestIndex = rightIndex;
+        }
+        if(largestIndex !== parentIndex){
+            let temp : Block = arr[parentIndex];
+            arr[parentIndex] = arr[largestIndex];
+            arr[largestIndex] = temp;
+            animations.push(new Animation(Color.swapColor, [parentIndex, largestIndex]));
+            heapify(arr, animations, length, largestIndex, slept);
+        }
+        animations.push(new Animation(Color.defaultColor, [parentIndex, leftIndex, rightIndex],length));
+    }   
 
     const finishAnimation = async (arr : Block[], slept : number) : Promise<void> => {
         //cool ending animation
@@ -181,7 +268,7 @@ export const Sort = () => {
                         <button onClick={()=>bubbleSort()}>Bubble Sort</button>
                         <button onClick={()=>selectionSort()}>Selection Sort</button>
                         <button onClick={()=>bubbleSort()}>Merge Sort</button>
-                        <button onClick={()=>bubbleSort()}>Heap Sort</button>
+                        <button onClick={()=>heapAnimations()}>Heap Sort</button>
                     </div>
                 </div>
                 <div className="d-flex justify-content-center rotate-180 flex-grow-1">
