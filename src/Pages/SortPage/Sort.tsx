@@ -263,7 +263,7 @@ export const Sort = () => {
             <NavBar active={Sections.Sorting}/>
             <section className="main-container">
                 <div className="d-flex justify-content-around">
-                    <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array {`${animationOnGoing}`}</button>
+                    <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array</button>
                     <div className="d-flex gap-2">
                         <button onClick={()=>bubbleSort()}>Bubble Sort</button>
                         <button onClick={()=>selectionSort()}>Selection Sort</button>

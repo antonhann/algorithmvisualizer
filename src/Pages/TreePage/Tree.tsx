@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { NavBar, Sections } from "../../Navbar/Navbar"
+import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
 import * as d3 from 'd3';
 interface TreeNode {
     name: string;
@@ -75,9 +75,25 @@ export const Tree = () => {
     }, []);
 
     return (
-        <div>
+        <div className="app-container">
             <NavBar active={Sections.Traversing}/>
-            <svg ref={svgRef} width={700} height={500} />
+            <section className="main-container">
+                <div className="d-flex justify-content-around">
+                    <button>Generate New Tree</button>
+                    <div className="d-flex gap-2">
+                        <button>Remove</button>
+                        <button>Insert</button>
+                    </div>
+                    <div className="d-flex gap-2">
+                        <button>DFS</button>
+                        <button>BFS</button>
+                    </div>
+                </div>
+                <div className="d-flex justify-content-center align-items-center flex-grow-1">
+                    <svg ref={svgRef} width={700} height={500} />
+                </div>
+            </section>
+            <Footer/>
         </div>
        
     );
