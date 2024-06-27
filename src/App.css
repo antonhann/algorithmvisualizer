@@ -24,3 +24,29 @@
   padding: 20px;
   text-align: center;
 }
+.binaryTree {
+  width: fit-content;
+}
+.binaryTree div{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  position: relative;
+}
+.binaryTree span{
+  grid-column: 1 / 3;
+  border: 1px solid black;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  margin: auto;
+}
+.binaryTree path{
+  fill: none;
+  stroke: black;
+  stroke-width: 2;
+}
