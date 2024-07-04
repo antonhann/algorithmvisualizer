@@ -2,38 +2,32 @@ import { useEffect, useRef } from "react";
 import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
 import * as d3 from 'd3';
 import { Color } from "../SortPage/Sort";
+import { AppContainer } from "../helper";
 class TreeNode {
     name: string;
     children?: TreeNode[];
-    color?: string;
+    color?: Color;
 
-    constructor(name : string, children : TreeNode[] = [], color : string = Color.defaultColor) {
+    constructor(name : string, children : TreeNode[] = [], color : Color = Color.defaultColor) {
         this.name = name;
         this.children = children;
         this.color = color;
     }
 };
 
-let data: TreeNode = {
-    name: 'Root',
-    children: [
-      {
-        name: 'Child 1',
-        children: [
-          { name: 'Grand 1' },
-          { name: 'Grand 2' }
-        ]
-      },
-      {
-        name: 'Child 2',
-        children: [
-          { name: 'Grand 3' },
-          { name: 'Grand 4' }
-        ]
-      }
-    ],
-    color: Color.defaultColor,
-};
+let data: TreeNode = new TreeNode('Root', 
+  [
+    new TreeNode('Child 1', [
+        new TreeNode('Grand 1'),
+        new TreeNode('Grand 2')
+    ]),
+    new TreeNode('Child 2', [
+        new TreeNode('Grand 3'),
+        new TreeNode('Grand 4')
+    ])
+  ],
+  Color.sortedColor
+);
   
 export const Tree = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
@@ -52,7 +46,7 @@ export const Tree = () => {
     const g = svg.append('g').attr('transform', 'translate(50, 50)');
 
     // Links
-    const links = g.selectAll('.link')
+    g.selectAll('.link')
       .data(root.links())
       .enter()
       .append('line')
@@ -96,26 +90,22 @@ export const Tree = () => {
   }, []);
 
     return (
-        <div className="app-container">
-            <NavBar active={Sections.Traversing}/>
-            <section className="main-container">
-                <div className="d-flex justify-content-around">
-                    <button>Generate New Tree</button>
-                    <div className="d-flex gap-2">
-                        <button>Remove</button>
-                        <button>Insert</button>
-                    </div>
-                    <div className="d-flex gap-2">
-                        <button>DFS</button>
-                        <button>BFS</button>
-                    </div>
-                </div>
-                <div className="d-flex justify-content-center align-items-center flex-grow-1">
-                    <svg ref={svgRef} width={700} height={500} />
-                </div>
-            </section>
-            <Footer/>
-        </div>
+        <AppContainer>
+              <div className="d-flex justify-content-around">
+                  <button>Generate New Tree</button>
+                  <div className="d-flex gap-2">
+                      <button>Remove</button>
+                      <button>Insert</button>
+                  </div>
+                  <div className="d-flex gap-2">
+                      <button>DFS</button>
+                      <button>BFS</button>
+                  </div>
+              </div>
+              <div className="d-flex justify-content-center align-items-center flex-grow-1">
+                  <svg ref={svgRef} width={700} height={500} />
+              </div>
+        </AppContainer>
        
     );
 };

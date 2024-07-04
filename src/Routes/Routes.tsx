@@ -3,6 +3,7 @@ import App from "../App";
 import { Home } from "../Pages/HomePage/Home";
 import { Sort } from "../Pages/SortPage/Sort";
 import { Tree } from "../Pages/TreePage/Tree";
+import { Searching } from "../Pages/Searching/Searching";
 
 export const router = createBrowserRouter([
     {
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
             {path: "/", element: <Home/>},
             {path: "/sorting", element: <Sort/>},
             {path: "/tree", element: <Tree/>},
+            {path: "/searching", element: <Searching/>},
         ],
     },
 ]);

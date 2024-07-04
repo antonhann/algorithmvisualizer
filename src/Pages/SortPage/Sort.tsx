@@ -1,15 +1,13 @@
 import { useEffect, useState, useRef } from "react"
-import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
-
+import { AppContainer, sleep} from "../helper";
 const DEFAULT_SIZE : number = 50;
-
 export enum Color{
     defaultColor = "black",
     highlightColor = "blue",
     sortedColor = "purple",
     swapColor = "red",
     doneColor = "green",
-}
+  }
 
 class Block{
     value : number;
@@ -57,9 +55,6 @@ export const Sort = () => {
         setArray(newArray);
     }
 
-    // delay function
-    const sleep = (ms : number) => new Promise(resolve => setTimeout(resolve, ms));
-
     // update the array
     const updateArray = async (newArray : Block[], time : number) => {
         //only update if there is an ongoing animation
@@ -71,9 +66,8 @@ export const Sort = () => {
 
     // color block of the array[index]
     const colorBlock = async (arr : Block[], index : number, time : number, color : Color) => {
-        let copyArray : Block[] = [...arr];
-        copyArray[index].color = color;
-        await updateArray(copyArray, time);
+        arr[index].color = color;
+        await updateArray(arr, time);
     }
 
     // set the animationOnGoing state and update the ref
@@ -137,6 +131,7 @@ export const Sort = () => {
         for(let i : number = 0; i < localArray.length; i++){
             let maxIndex : number = 0; //max index of the current iteration
             for(let j : number = 0; j < localArray.length - i; j++){
+                console.log(j);
                 if (!animationOnGoingRef.current) {
                     // if the animation is stopped, break the animation
                     break;
@@ -259,9 +254,7 @@ export const Sort = () => {
     },[]);
 
     return(
-        <div className="app-container">
-            <NavBar active={Sections.Sorting}/>
-            <section className="main-container">
+        <AppContainer>
                 <div className="d-flex justify-content-around">
                     <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array</button>
                     <div className="d-flex gap-2">
@@ -283,9 +276,7 @@ export const Sort = () => {
                         />
                     ))}
                 </div>
-            </section>
-            <Footer/>
-        </div>
+        </AppContainer>
     )
 }
 

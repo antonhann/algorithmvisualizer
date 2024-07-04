@@ -1,5 +1,5 @@
 interface NavProps{
-    active: Sections
+    active?: Sections
 }
 
 export enum Sections{

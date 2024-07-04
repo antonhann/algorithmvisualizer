@@ -15,6 +15,16 @@
   border: 1px solid #ccc;
   width: 20px;
 }
+.box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 50px;
+  border: 5px solid #ccc;
+  margin: 10px;
+  color: white;
+}
 .rotate-180 {
   transform: rotate(180deg) scaleX(-1);
   margin-bottom: 150px;

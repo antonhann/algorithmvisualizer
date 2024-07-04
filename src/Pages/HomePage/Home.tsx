@@ -20,7 +20,7 @@ export const Home = () => {
             <div className="d-flex justify-content-around pt-5">
               <a href = "/sorting">Sorting</a>
               <a href="/tree">Tree</a>
-              <a>Matrix</a>
+              <a href = "/searching">Searching</a>
               <a>Linked List</a>
               <a>Array</a>
             </div>
