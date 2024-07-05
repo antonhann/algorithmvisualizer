@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { AppContainer, sleep } from "../helper";
 import { Color } from "../SortPage/Sort";
-import { color } from "d3";
 class Box{
     value: number;
     color: string;
