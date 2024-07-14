@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
-import { Footer, NavBar, Sections } from "../../Navbar/Navbar"
+import { useEffect, useRef, useState } from "react";
 import * as d3 from 'd3';
 import { Color } from "../SortPage/Sort";
 import { AppContainer } from "../helper";
+import { sleep } from "../helper";
 class TreeNode {
     name: string;
     children?: TreeNode[];
@@ -26,69 +26,100 @@ let data: TreeNode = new TreeNode('Root',
         new TreeNode('Grand 4')
     ])
   ],
-  Color.sortedColor
+  Color.defaultColor
 );
-  
+enum DfsState {
+  preorder,
+  inorder,
+  postorder,
+}
 export const Tree = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
+    const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
+    const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
+    const [tree, setTree] = useState<TreeNode>(data);
 
-  useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    const width = 600;
-    const height = 400;
+    const setAnimationOnGoingState = (state : boolean) => {
+      setAnimationOnGoing(state);
+      animationOnGoingRef.current = state;
+  };
+    const updateTree = async (tree : TreeNode, time : number) => {
+        //only update if there is an ongoing animation
+        if(animationOnGoingRef.current){
+            setTree({...tree});
+            await sleep(time);
+        }
+    }
+    const handleDfs = async (type : DfsState) => {
+      let localTree = {...tree};
+      setAnimationOnGoingState(true);
+      const dfs = async (node: TreeNode) => {
+        if (!node) return;
+        node.color = Color.doneColor;
+        await updateTree(localTree, 1000);
+        for (let child of node.children || []) {
+          await dfs(child);
+        }
+      }
+      dfs(localTree);
+    };
 
-    const root = d3.hierarchy(data);
-    const treeLayout = d3.tree<TreeNode>().size([width, height]);
-    treeLayout(root);
+    useEffect(() => {
+      const svg = d3.select(svgRef.current);
+      const width = 600;
+      const height = 400;
 
-    svg.selectAll('*').remove(); // Clear previous content
+      const root = d3.hierarchy(tree);
+      const treeLayout = d3.tree<TreeNode>().size([width, height]);
+      treeLayout(root);
 
-    const g = svg.append('g').attr('transform', 'translate(50, 50)');
+      svg.selectAll('*').remove(); // Clear previous content
 
-    // Links
-    g.selectAll('.link')
-      .data(root.links())
-      .enter()
-      .append('line')
-      .classed('link', true)
-      .attr('x1', (d: any) => d.source.x)
-      .attr('y1', (d: any) => d.source.y)
-      .attr('x2', (d: any) => d.target.x)
-      .attr('y2', (d: any) => d.target.y)
-      .style('stroke', '#ccc')
-      .style('stroke-width', 2); // Increase stroke width for better visibility
+      const g = svg.append('g').attr('transform', 'translate(50, 50)');
 
-    // Nodes
-    const nodes = g.selectAll('.node')
-      .data(root.descendants())
-      .enter()
-      .append('g')
-      .classed('node', true)
-      .attr('transform', (d: any) => `translate(${d.x}, ${d.y})`);
+      // Links
+      g.selectAll('.link')
+        .data(root.links())
+        .enter()
+        .append('line')
+        .classed('link', true)
+        .attr('x1', (d: any) => d.source.x)
+        .attr('y1', (d: any) => d.source.y)
+        .attr('x2', (d: any) => d.target.x)
+        .attr('y2', (d: any) => d.target.y)
+        .style('stroke', '#ccc')
+        .style('stroke-width', 2); // Increase stroke width for better visibility
 
-    // Circle background (to cover lines)
-    nodes.append('circle')
-      .attr('r', 40) // Increase radius to ensure it covers lines
-      .style('fill', 'white'); // Fill with white to cover lines
+      // Nodes
+      const nodes = g.selectAll('.node')
+        .data(root.descendants())
+        .enter()
+        .append('g')
+        .classed('node', true)
+        .attr('transform', (d: any) => `translate(${d.x}, ${d.y})`);
 
-    // Circle border
-    nodes.append('circle')
-      .attr('r', 40) // Adjust the radius as needed
-      .style('fill', 'none')
-      .style('stroke', (d: any) => d.data.color || '#69b3a2') // Border color based on node data
-      .style('stroke-width', 2); // Border width
+      // Circle background (to cover lines)
+      nodes.append('circle')
+        .attr('r', 40) // Increase radius to ensure it covers lines
+        .style('fill', 'white'); // Fill with white to cover lines
 
-    // Text
-    nodes.append('text')
-      .attr('dy', 5) // Adjust this to vertically center the text within the circle
-      .attr('text-anchor', 'middle')
-      .text((d: any) => d.data.name);
+      // Circle border
+      nodes.append('circle')
+        .attr('r', 40) // Adjust the radius as needed
+        .style('fill', 'none')
+        .style('stroke', (d: any) => d.data.color || '#69b3a2') // Border color based on node data
+        .style('stroke-width', 2); // Border width
 
-    // Move nodes (circles and text) above links
-    g.selectAll('.node').raise();
+      // Text
+      nodes.append('text')
+        .attr('dy', 5) // Adjust this to vertically center the text within the circle
+        .attr('text-anchor', 'middle')
+        .text((d: any) => d.data.name);
 
-  }, []);
+      // Move nodes (circles and text) above links
+      g.selectAll('.node').raise();
 
+    }, [tree]);
     return (
         <AppContainer>
               <div className="d-flex justify-content-around">
@@ -98,7 +129,11 @@ export const Tree = () => {
                       <button>Insert</button>
                   </div>
                   <div className="d-flex gap-2">
-                      <button>DFS</button>
+                      <div className="d-flex gap-2 flex-column">
+                        <button onClick={() => handleDfs(DfsState.preorder)}>Pre - Order</button>
+                        <button onClick={() => handleDfs(DfsState.preorder)}>In - Order</button>
+                        <button onClick={() => handleDfs(DfsState.preorder)}>Post - Order</button>
+                      </div>
                       <button>BFS</button>
                   </div>
               </div>
