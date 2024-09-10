@@ -31,7 +31,7 @@ export const Tree = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
     const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
-    const [ms, setMs] = useState<number>(800);
+    const ms = 1000;
     const [tree, setTree] = useState<TreeNode>(data);
 
     const setAnimationOnGoingState = (state : boolean) => {
