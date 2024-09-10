@@ -18,7 +18,7 @@ export const Searching = () => {
     const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
     const [found, setFound] = useState<boolean>(false); //if the target is found
     const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
-    const [ms, setMs] = useState<number>(50); // speed of the animation
+    const [ms, setMs] = useState<number>(100); // speed of the animation
     const slept = useRef(ms); // the current speed of the animation
     const [foundIndex, setFoundIndex] = useState<number>(-1); //index for the found target for resetting search
     const [target, setTarget] = useState<number>(-1); //target to search for
