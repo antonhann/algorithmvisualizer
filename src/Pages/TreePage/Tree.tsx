@@ -31,7 +31,7 @@ export const Tree = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
     const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
-    const [ms, setMs] = useState<number>(1000);
+    const [ms, setMs] = useState<number>(800);
     const [tree, setTree] = useState<TreeNode>(data);
 
     const setAnimationOnGoingState = (state : boolean) => {
@@ -45,6 +45,7 @@ export const Tree = () => {
             await sleep(time);
         }
     }
+    
     const handleDfs = async (type : DFSType) => {
       let localTree = {...tree};
       setAnimationOnGoingState(true);
@@ -68,6 +69,27 @@ export const Tree = () => {
       await dfs(localTree);
       setAnimationOnGoingState(false);
     };
+    const handleBfs = async() => {
+      let localTree = {...tree};
+      setAnimationOnGoingState(true)
+      let queue = [localTree];
+      while (queue){
+        let length = queue.length;
+        for(let i = 0; i < length; i++){
+          let node = queue.shift();
+          if (node){
+            node.color = Color.doneColor;
+            await updateTree(localTree,ms);
+            if(node.left){
+              queue.push(node.left)
+            }
+            if(node.right){
+              queue.push(node.right)
+            }
+          }
+        }
+      }
+    }
     const resetTree = async () => {
       console.log("starting");
       const localTree = {...tree};
@@ -84,6 +106,7 @@ export const Tree = () => {
       
     }
     useEffect(() => {
+        
         const svg = d3.select(svgRef.current);
         const width = 600;
         const height = 400;
@@ -151,18 +174,11 @@ export const Tree = () => {
     return (
         <AppContainer>
               <div className="d-flex justify-content-around">
-                  <button>Generate New Tree</button>
                   <div className="d-flex gap-2">
-                      <button>Remove</button>
-                      <button>Insert</button>
-                  </div>
-                  <div className="d-flex gap-2">
-                      <div className="d-flex gap-2 flex-column">
                         <button onClick={() => handleDfs(DFSType.preorder)}>Pre - Order</button>
                         <button onClick={() => handleDfs(DFSType.inorder)}>In - Order</button>
                         <button onClick={() => handleDfs(DFSType.postorder)}>Post - Order</button>
-                      </div>
-                      <button>BFS</button>
+                      <button onClick={() => handleBfs()}>BFS</button>
                       <button onClick={() => resetTree()}>Reset</button>
                   </div>
               </div>
