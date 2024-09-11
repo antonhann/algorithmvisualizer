@@ -14,7 +14,7 @@ export const Matrix = () => {
     };
 
     const [ms, setMs] = useState<number>(100); // speed of the animation
-    const slept = useRef(ms); // the current speed of the animation
+    // const slept = useRef(ms); // the current speed of the animation
     // const setSleptState = (time : number) => {
     //     slept.current = time;
     //     setMs(time);
@@ -41,6 +41,7 @@ export const Matrix = () => {
     }
 
     useEffect(() => {
+        setMs(1000)
         let arr : Box[][] = [];
         let j = 1;
         let temp : Box[] = [];
