@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { AppContainer, sleep } from "../helper";
 import { Color } from "./Sort";
-class Box{
+export class Box{
     value: number;
     color: string;
     constructor(value: number, color: string){
@@ -81,7 +81,7 @@ export const Searching = () => {
         let r : number = localArray.length - 1;
         setFound(false);
         //highlight the left and right boxes
-        colorBox(localArray, l, Color.highlightColor, slept.current);
+        await colorBox(localArray, l, Color.highlightColor, slept.current);
         await colorBox(localArray, r, Color.highlightColor, slept.current);
         setAnimationOnGoingState(true);
         //preform binary search

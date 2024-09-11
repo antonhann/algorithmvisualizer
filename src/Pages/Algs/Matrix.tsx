@@ -1,16 +1,51 @@
-import { useEffect, useState } from "react"
-import { AppContainer } from "../helper"
-import { timeMonday } from "d3";
+import { useEffect, useRef, useState } from "react"
+import { AppContainer, sleep } from "../helper"
+import { Box } from "./Searching"
+import { Color } from "./Sort";
 
 export const Matrix = () => {
-    let [array , setArray] = useState<number[][]>([]);
-    
+    let [array , setArray] = useState<Box[][]>([]);
+
+    let [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false);
+    const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
+    const setAnimationOnGoingState = (state : boolean) => {
+        setAnimationOnGoing(state);
+        animationOnGoingRef.current = state;
+    };
+
+    const [ms, setMs] = useState<number>(100); // speed of the animation
+    const slept = useRef(ms); // the current speed of the animation
+    const setSleptState = (time : number) => {
+        slept.current = time;
+        setMs(time);
+    }
+
+    const updateArray = async (newArray : Box[][], time : number) => {
+        if(animationOnGoingRef.current){
+            setArray([...newArray]);
+            await sleep(time);
+        }
+    }
+
+    const colorBox = async (localArray: Box[][], row : number, col : number, color : string, time : number) => {
+        console.log('trying', row,col)
+        localArray[row][col].color = color
+        await updateArray(localArray,ms)
+        console.log(array)
+    }
+
+    const handleBoxClick = async (row : number, col : number) => {
+        let localArray : Box[][] = [...array]
+        setAnimationOnGoingState(true);
+        await colorBox(localArray, row, col, Color.doneColor, 1000)
+    }
+
     useEffect(() => {
-        let arr = [];
+        let arr : Box[][] = [];
         let j = 1;
-        let temp : number[] = [];
+        let temp : Box[] = [];
         for(let i = 0; i < 25; i++){
-            temp.push(j)
+            temp.push(new Box(j, Color.defaultColor))
             j += 1
             if(temp.length == 5){
                 arr.push(temp)
@@ -27,13 +62,16 @@ export const Matrix = () => {
                     array.map((row, rowIndex) => (
                         <div className = "matrixRow d-flex flex-row justify-content-center gap-3" key = {rowIndex}>
                             {
-                                row.map((val, valIndex) => (
+                                row.map((box, colIndex) => (
                                     <div 
                                     className = "matrixVal d-flex justify-content-center align-items-center"
-                                    key = {valIndex}
-
+                                    key = {colIndex}
+                                    style= {{
+                                        backgroundColor: `${box.color}`
+                                    }}
+                                    onClick={() => handleBoxClick(rowIndex,colIndex)}
                                     >
-                                        {val}
+                                        {box.value}
                                     </div>
                                 ))
                             }
