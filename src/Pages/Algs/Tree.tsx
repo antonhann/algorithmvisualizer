@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import * as d3 from 'd3';
-import { Color } from "../SortPage/Sort";
+import { Color } from "./Sort";
 import { AppContainer } from "../helper";
 import { sleep } from "../helper";
 class TreeNode {

@@ -34,6 +34,8 @@
   padding: 20px;
   text-align: center;
 }
+
+
 .binaryTree {
   width: fit-content;
 }
@@ -60,6 +62,17 @@
   stroke: black;
   stroke-width: 2;
 }
+
+.matrixRow{
+  width: 60%;
+}
+
+.matrixVal{
+  width: 80px;
+  height: 80px;
+  border: 1px solid black;
+}
+
 .slider{
   -webkit-appearance: none;
   height: 15px;

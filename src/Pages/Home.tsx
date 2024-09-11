@@ -1,5 +1,5 @@
 // App.js or Layout Component
-import { NavBar, Sections } from "../../Navbar/Navbar";
+import { NavBar, Sections } from "../Navbar/Navbar";
 
 
 export const Home = () => {
@@ -22,7 +22,7 @@ export const Home = () => {
               <a href="/tree">Tree</a>
               <a href = "/searching">Searching</a>
               <a>Linked List</a>
-              <a>Array</a>
+              <a href = "/matrix">Matrix</a>
             </div>
           </div>
         </section>

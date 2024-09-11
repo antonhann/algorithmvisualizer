@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { AppContainer, sleep } from "../helper";
-import { Color } from "../SortPage/Sort";
+import { Color } from "./Sort";
 class Box{
     value: number;
     color: string;
