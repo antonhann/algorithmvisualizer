@@ -15,10 +15,10 @@ export const Matrix = () => {
 
     const [ms, setMs] = useState<number>(100); // speed of the animation
     const slept = useRef(ms); // the current speed of the animation
-    const setSleptState = (time : number) => {
-        slept.current = time;
-        setMs(time);
-    }
+    // const setSleptState = (time : number) => {
+    //     slept.current = time;
+    //     setMs(time);
+    // }
 
     const updateArray = async (newArray : Box[][], time : number) => {
         if(animationOnGoingRef.current){
@@ -30,7 +30,7 @@ export const Matrix = () => {
     const colorBox = async (localArray: Box[][], row : number, col : number, color : string, time : number) => {
         console.log('trying', row,col)
         localArray[row][col].color = color
-        await updateArray(localArray,ms)
+        await updateArray(localArray,time)
         console.log(array)
     }
 
