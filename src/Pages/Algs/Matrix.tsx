@@ -37,7 +37,7 @@ export const Matrix = () => {
     const handleBoxClick = async (row : number, col : number) => {
         let localArray : Box[][] = [...array]
         setAnimationOnGoingState(true);
-        await colorBox(localArray, row, col, Color.doneColor, 1000)
+        await colorBox(localArray, row, col, Color.doneColor, ms)
     }
 
     useEffect(() => {
