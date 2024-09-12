@@ -73,6 +73,9 @@
   border: 1px solid black;
   cursor: pointer;
 }
+.active{
+  background-color: green;
+}
 
 .slider{
   -webkit-appearance: none;
