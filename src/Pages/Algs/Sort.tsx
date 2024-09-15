@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import { AppContainer, sleep} from "../helper";
+import { AppContainer, sleep, SpeedSlider} from "../helper";
 const DEFAULT_SIZE : number = 50;
 export enum Color{
     defaultColor = "black",
@@ -34,7 +34,7 @@ export const Sort = () => {
     const [animationOnGoing, setAnimationOnGoing] = useState<boolean>(false); 
     const animationOnGoingRef = useRef(animationOnGoing); // To keep track of the animationOnGoing state
     const [ms, setMs] = useState<number>(10);
-    const slept = useRef(ms);
+    const sleepState = useRef(ms);
     const fillArray = (size : number) : void => {
         //reset the animation state
         setAnimationOnGoingState(false);
@@ -75,10 +75,6 @@ export const Sort = () => {
         setAnimationOnGoing(state);
         animationOnGoingRef.current = state;
     };
-    const setSleptState = (time : number) => {
-        slept.current = time;
-        setMs(time);
-    }
 
     const bubbleSort = async () : Promise<void> => {
         // avoid overlapping animations
@@ -94,20 +90,20 @@ export const Sort = () => {
                     // if the animation is stopped, break the animation
                     break;
                 }
-                await colorBlock(localArray, j, slept.current, Color.highlightColor); //highlight the current block
+                await colorBlock(localArray, j, sleepState.current, Color.highlightColor); //highlight the current block
                 if(localArray[j].value > localArray[j+1].value){
                     //color the swap blocks
-                    await colorBlock(localArray, j, slept.current, Color.swapColor);
-                    await colorBlock(localArray, j+1, slept.current, Color.swapColor);
+                    await colorBlock(localArray, j, sleepState.current, Color.swapColor);
+                    await colorBlock(localArray, j+1, sleepState.current, Color.swapColor);
 
                     //perform the swap
                     let temp : Block = localArray[j];
                     localArray[j] = localArray[j+1];
                     localArray[j+1] = temp;
-                    await updateArray(localArray, slept.current);
+                    await updateArray(localArray, sleepState.current);
                 }
                 //reset the color of the current block
-                await colorBlock(localArray, j, slept.current, Color.defaultColor);
+                await colorBlock(localArray, j, sleepState.current, Color.defaultColor);
             }
             //color the sorted block
             localArray[localArray.length - i - 1].color = Color.sortedColor;
@@ -132,24 +128,24 @@ export const Sort = () => {
                     break;
                 }
                 //highlight the current block
-                await colorBlock(localArray, j, slept.current, Color.highlightColor);
+                await colorBlock(localArray, j, sleepState.current, Color.highlightColor);
 
                 //check if the current block is greater than the max block
                 if(localArray[j].value > localArray[maxIndex].value){
-                    await colorBlock(localArray, maxIndex, slept.current, Color.defaultColor);
+                    await colorBlock(localArray, maxIndex, sleepState.current, Color.defaultColor);
                     maxIndex = j;
-                    await colorBlock(localArray, maxIndex, slept.current, Color.swapColor);
+                    await colorBlock(localArray, maxIndex, sleepState.current, Color.swapColor);
                 }else{
                     //reset the color of the current block that isnt that max block
-                    await colorBlock(localArray, j, slept.current, Color.defaultColor);
+                    await colorBlock(localArray, j, sleepState.current, Color.defaultColor);
                 }
             }
             //swap the max block with the last unsorted block
             let temp : Block = localArray[maxIndex];
             localArray[maxIndex] = localArray[localArray.length - i - 1];
             localArray[localArray.length - i - 1] = temp;
-            await updateArray(localArray, slept.current);
-            await colorBlock(localArray, localArray.length - i - 1, slept.current, Color.sortedColor);
+            await updateArray(localArray, sleepState.current);
+            await colorBlock(localArray, localArray.length - i - 1, sleepState.current, Color.sortedColor);
         }
         //animation done
         await finishAnimation(localArray);
@@ -168,22 +164,22 @@ export const Sort = () => {
             if(animation.type === Color.highlightColor || animation.type === Color.defaultColor){
                 for(let index of animation.indexes){
                     if (animation.length && index > 0 && index < animation.length) {
-                        await colorBlock(localArray, index, slept.current, animation.type);
+                        await colorBlock(localArray, index, sleepState.current, animation.type);
                     }
                 }
             }
             else if(animation.type === Color.swapColor || animation.type === Color.sortedColor){
                 let firstIndex : number = animation.indexes[0];
                 let secondIndex : number = animation.indexes[1];
-                await colorBlock(localArray, firstIndex, slept.current, Color.swapColor);
-                await colorBlock(localArray, secondIndex, slept.current, Color.swapColor);
+                await colorBlock(localArray, firstIndex, sleepState.current, Color.swapColor);
+                await colorBlock(localArray, secondIndex, sleepState.current, Color.swapColor);
                 let temp : Block = localArray[firstIndex];
                 localArray[firstIndex] = localArray[secondIndex];
                 localArray[secondIndex] = temp;
-                await updateArray(localArray, slept.current);
+                await updateArray(localArray, sleepState.current);
                 let color = animation.type === Color.swapColor ? Color.defaultColor : Color.sortedColor;
-                await colorBlock(localArray, firstIndex, slept.current, color);
-                await colorBlock(localArray, secondIndex, slept.current, color);
+                await colorBlock(localArray, firstIndex, sleepState.current, color);
+                await colorBlock(localArray, secondIndex, sleepState.current, color);
             }
         }
         await finishAnimation(localArray);
@@ -235,7 +231,7 @@ export const Sort = () => {
         setAnimationOnGoing(false);
         let copyArray : Block[] = [...arr];
         for(let i : number = 0; i < copyArray.length; i++){
-            await colorBlock(copyArray, i, slept.current, Color.doneColor);
+            await colorBlock(copyArray, i, sleepState.current, Color.doneColor);
         }
     }
 
@@ -248,17 +244,7 @@ export const Sort = () => {
         <AppContainer>
                 <div className="d-flex justify-content-around">
                     <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array</button>
-                    <div className="d-flex gap-2">
-                        <label>Speed: {ms}ms</label>
-                        <input
-                            className="slider"
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={ms}
-                            onChange={(e) => setSleptState(parseInt(e.target.value))}
-                        />
-                    </div>
+                    <SpeedSlider ms={ms} setMs={setMs} sleepState = {sleepState}/>
                     <div className="d-flex gap-2">
                         <button onClick={()=>bubbleSort()}>Bubble Sort</button>
                         <button onClick={()=>selectionSort()}>Selection Sort</button>

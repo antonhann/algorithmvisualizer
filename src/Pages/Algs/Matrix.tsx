@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { AppContainer, sleep, SpeedSlider } from "../helper"
+import { AppContainer, sleep, Slider, SpeedSlider } from "../helper"
 import { Box } from "./Searching"
 import { Color } from "./Sort";
 
@@ -15,12 +15,9 @@ export const Matrix = () => {
 
     const [isDfs, setIsDfs] = useState<boolean>(true);
 
-    const [ms, setMs] = useState<number>(500); // speed of the animation
+    const [ms, setMs] = useState<number>(100); // speed of the animation
     const sleepState = useRef(ms); // the current speed of the animation
-    // const setSleptState = (time : number) => {
-    //     slept.current = time;
-    //     setMs(time);
-    // }
+    const [n, setN] = useState<number>(10);
 
     const updateArray = async (newArray : Box[][], time : number) => {
         if(animationOnGoingRef.current){
@@ -52,12 +49,12 @@ export const Matrix = () => {
             localArray[row][col].color === Color.doneColor || localArray[row][col].color === Color.highlightColor){
             return;
         }
-        await colorBox(localArray, row, col, Color.highlightColor, ms);
+        await colorBox(localArray, row, col, Color.highlightColor, sleepState.current);
         await dfs(localArray, row+1, col);
         await dfs(localArray, row-1, col);
         await dfs(localArray, row, col+1);
         await dfs(localArray, row, col-1);
-        await colorBox(localArray, row, col, Color.doneColor, ms);
+        await colorBox(localArray, row, col, Color.doneColor, sleepState.current);
     }
     const bfs = async (localArray : Box[][], row : number, col : number) => {
         let queue : number[][] = [];
@@ -73,12 +70,12 @@ export const Matrix = () => {
                 localArray[r][c].color === Color.doneColor || localArray[r][c].color === Color.highlightColor){
                 continue;
             }
-            await colorBox(localArray, r, c, Color.highlightColor, ms);
+            await colorBox(localArray, r, c, Color.highlightColor, sleepState.current);
             queue.push([r+1,c]);
             queue.push([r-1,c]);
             queue.push([r,c+1]);
             queue.push([r,c-1]);
-            await colorBox(localArray, r, c, Color.doneColor, ms);
+            await colorBox(localArray, r, c, Color.doneColor, sleepState.current);
         }
     }   
 
@@ -86,16 +83,18 @@ export const Matrix = () => {
         let arr : Box[][] = [];
         let j = 1;
         let temp : Box[] = [];
-        for(let i = 0; i < 25; i++){
+        let rows = n;
+        let cols = n;
+        for(let i = 0; i < rows * cols; i++){
             temp.push(new Box(j, Color.defaultColor))
             j += 1
-            if(temp.length == 5){
+            if(temp.length == cols){
                 arr.push(temp)
                 temp = []
             }
         }
         setArray(arr)
-    },[])
+    },[n])
     const activateDfs = () => {
         setIsDfs(true);
     }
@@ -104,44 +103,55 @@ export const Matrix = () => {
     }
     const resetMatrix = () => {
         setAnimationOnGoingState(false);
-        let localArray : Box[][] = [...array];
-        for(let i = 0; i < localArray.length; i++){
-            for(let j = 0; j < localArray[i].length; j++){
-                localArray[i][j].color = Color.defaultColor;
-            }
-        }
+        let localArray: Box[][] = array.map(row => 
+            row.map(cell => ({ ...cell, color: Color.defaultColor }))
+        );
         setArray(localArray);
     }
-
+    const handleNChange = (e : number) => {
+        setAnimationOnGoingState(false);
+        resetMatrix();
+        setN(e)
+    }
     return(
         <AppContainer>
-            <div className="d-flex justify-content-center flex-column align-items-center flex-grow-1 gap-3">
+            <div className="d-flex flex-column align-items-center flex-grow-1 gap-3">
                 <div className="d-flex gap-2">
+                    <label>
+                        N - Dimensions: {n}
+                    </label>
+                    <Slider
+                        min = {3}
+                        max = {50}
+                        value = {n}
+                        setValue = {handleNChange}
+                    />
                     <button onClick={() => resetMatrix()}>Reset</button>
                     <SpeedSlider ms={ms} setMs = {setMs} sleepState = {sleepState}/>
                     <button className = {isDfs ? "active" : ""} onClick={() => activateDfs()}>DFS</button>
                     <button className = {isDfs ? "" : "active"} onClick={() => activateBfs()}>BFS</button>
                 </div>
-                {
-                    array.map((row, rowIndex) => (
-                        <div className = "matrixRow d-flex flex-row justify-content-center gap-3" key = {rowIndex}>
-                            {
-                                row.map((box, colIndex) => (
-                                    <div 
-                                    className = "matrixVal d-flex justify-content-center align-items-center"
-                                    key = {colIndex}
-                                    style= {{
-                                        backgroundColor: `${box.color}`
-                                    }}
-                                    onClick={() => handleBoxClick(rowIndex,colIndex)}
-                                    >
-                                        {box.value}
-                                    </div>
-                                ))
-                            }
-                        </div>
-                    ))
-                }
+                <div className="matrix d-flex flex-column">
+                    {
+                        array.map((row, rowIndex) => (
+                            <div className="matrixRow" key = {rowIndex}>
+                                {
+                                    row.map((box, colIndex) => (
+                                        <div 
+                                        className = "matrixVal d-flex justify-content-center align-items-center"
+                                        key = {colIndex}
+                                        style= {{
+                                            backgroundColor: `${box.color}`
+                                        }}
+                                        onClick={() => handleBoxClick(rowIndex,colIndex)}
+                                        >
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        ))
+                    }
+                </div>
             </div>
         </AppContainer>
     )

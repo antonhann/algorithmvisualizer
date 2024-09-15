@@ -33,11 +33,30 @@ export const SpeedSlider = (props : any) => {
             <input
                 className="slider"
                 type="range"
-                min="0"
-                max="500"
+                min={0}
+                max={250}
                 value={ms}
                 onChange={(e) => setMsState(sleepState,parseInt(e.target.value), setMs)}
             />
         </>
+    )
+}
+
+export const Slider = (props : any) => {
+    const{
+        min,
+        max,
+        value,
+        setValue,
+    } = props
+    return(
+        <input
+                className="slider"
+                type="range"
+                min={min}
+                max={max}
+                value={value}
+                onChange={(e) => setValue(parseInt(e.target.value))}
+        />
     )
 }

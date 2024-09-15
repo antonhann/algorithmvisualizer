@@ -117,14 +117,14 @@ export const Searching = () => {
                   <button>Generate Array</button>
                   <div className="d-flex gap-2">
                         <SpeedSlider ms={ms} setMs={setMs} sleepState = {sleepState}/>
-                              <input
-                                type="number"
-                                value={target}
-                                min="0"
-                                max= "100"
-                                onChange={(e) => setTarget(parseInt(e.target.value))}
-                                step="any"
-                            />
+                        <input
+                            type="number"
+                            value={target}
+                            min="0"
+                            max= "100"
+                            onChange={(e) => setTarget(parseInt(e.target.value))}
+                            step="any"
+                        />
                     </div>
                   <div className="d-flex gap-2">
                       <button onClick={() => linearSearch()}>Linear Search</button>
