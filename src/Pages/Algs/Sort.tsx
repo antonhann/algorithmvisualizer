@@ -7,6 +7,7 @@ export enum Color{
     sortedColor = "purple",
     swapColor = "red",
     doneColor = "green",
+    white = "white"
   }
 
 class Block{
@@ -242,7 +243,7 @@ export const Sort = () => {
 
     return(
         <AppContainer>
-                <div className="d-flex justify-content-around">
+                <div className="alg-buttons d-flex justify-content-around">
                     <button onClick={()=>fillArray(DEFAULT_SIZE)}>Generate New Array</button>
                     <SpeedSlider ms={ms} setMs={setMs} sleepState = {sleepState}/>
                     <div className="d-flex gap-2">
@@ -252,7 +253,7 @@ export const Sort = () => {
                         <button onClick={()=>heapAnimations()}>Heap Sort</button>
                     </div>
                 </div>
-                <div className="d-flex justify-content-center rotate-180 flex-grow-1">
+                <div className="blocks d-flex justify-content-center rotate-180 flex-grow-1">
                     {array.map(block => (
                         <div 
                         key = {block.value} 

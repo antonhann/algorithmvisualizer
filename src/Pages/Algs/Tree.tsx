@@ -153,7 +153,7 @@ export const Tree = () => {
     
         // Circle border
         nodes.append('circle')
-            .attr('r', 40) // Adjust the radius as needed
+            .attr('r', 50) // Adjust the radius as needed
             .style('fill', 'none')
             .style('fill', (d: any) => d.data.color || '#69b3a2') // Border color based on node data
             .style('stroke-width', 2); // Border width
@@ -173,7 +173,7 @@ export const Tree = () => {
 
     return (
         <AppContainer>
-              <div className="d-flex justify-content-around">
+              <div className="alg-buttons d-flex justify-content-around">
                   <div className="d-flex gap-2">
                         <button onClick={() => handleDfs(DFSType.preorder)}>Pre - Order</button>
                         <button onClick={() => handleDfs(DFSType.inorder)}>In - Order</button>

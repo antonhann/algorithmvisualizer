@@ -16,9 +16,9 @@ export const NavBar = (props: NavProps) => {
 
     return(
         <>
-            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <nav className="navbar navbar-expand-lg p-3">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="/">AlgVis</a>
+                    <a className="navbar-brand" href="/"><h2>AlgVis</h2></a>
                     <button className="navbar-toggler " type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                     </button>

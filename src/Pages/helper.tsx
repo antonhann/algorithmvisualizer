@@ -1,4 +1,4 @@
-import { Footer, NavBar } from "../Navbar/Navbar"
+import { Footer, NavBar } from "./Navbar"
 
 
 export const AppContainer = ({ children, active} : any) => {
@@ -28,17 +28,18 @@ export const SpeedSlider = (props : any) => {
     } = props;
 
     return(
-        <>
-            <label>Speed: {ms}ms</label>
+        <div className="d-flex align-items-center gap-3">
+            <label>Speed: </label>
             <input
-                className="slider"
+                className="slider "
                 type="range"
                 min={0}
                 max={250}
+                style={{direction: "rtl"}}
                 value={ms}
                 onChange={(e) => setMsState(sleepState,parseInt(e.target.value), setMs)}
             />
-        </>
+        </div>
     )
 }
 

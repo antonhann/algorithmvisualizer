@@ -11,7 +11,7 @@ export class Box{
 }
 const DEFAULT_ARRAY : Box[] = [];
 for(let i = 0; i < 20; i++){
-    DEFAULT_ARRAY.push(new Box(i, Color.defaultColor));
+    DEFAULT_ARRAY.push(new Box(i + 1, Color.defaultColor));
 }
 export const Searching = () => {
     const [array, setArray] = useState<Box[]>(DEFAULT_ARRAY); //current array
@@ -113,15 +113,16 @@ export const Searching = () => {
     }
     return (
         <AppContainer>
-            <div className="d-flex justify-content-around">
-                  <button>Generate Array</button>
-                  <div className="d-flex gap-2">
-                        <SpeedSlider ms={ms} setMs={setMs} sleepState = {sleepState}/>
+            <div className="alg-buttons d-flex justify-content-around">
+                    <SpeedSlider ms={ms} setMs={setMs} sleepState = {sleepState}/>
+                    <div className="d-flex align-items-center gap-2">
+                        <label>Search Value:</label>
                         <input
                             type="number"
                             value={target}
                             min="0"
                             max= "100"
+                            style={{width: "75px"}}
                             onChange={(e) => setTarget(parseInt(e.target.value))}
                             step="any"
                         />

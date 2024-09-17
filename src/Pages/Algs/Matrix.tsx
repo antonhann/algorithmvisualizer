@@ -116,7 +116,7 @@ export const Matrix = () => {
     return(
         <AppContainer>
             <div className="d-flex flex-column align-items-center flex-grow-1 gap-3">
-                <div className="d-flex gap-2">
+                <div className="alg-buttons d-flex align-items-center gap-2">
                     <label>
                         N - Dimensions: {n}
                     </label>
